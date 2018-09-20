@@ -40,7 +40,7 @@ def compute_fbank(file):
 		data_input[i]=data_line[0:200] # 设置为400除以2的值（即200）是取一半数据，因为是对称的
 	#print(data_input.shape)
 	data_input = np.log(data_input + 1)
-	data_input = data_input[::3]
+	data_input = data_input[::]
 	data_input = np.transpose(data_input)  
-	data_input = pad_sequences(data_input, maxlen=800, dtype='float', padding='post', truncating='post').T	
+	#data_input = pad_sequences(data_input, maxlen=800, dtype='float', padding='post', truncating='post').T	
 	return data_input

@@ -23,7 +23,7 @@ from keras import backend as K
 from keras.optimizers import SGD, Adadelta, Adam
 from keras.layers.recurrent import GRU
 from keras.preprocessing.sequence import pad_sequences
-from keras.utils import multi_gpu_model
+#from keras.utils import multi_gpu_model
 from extra_utils.GetData import get_data
 
 
@@ -41,37 +41,37 @@ def ctc_lambda(args):
 
 # 构建网络结构，用于模型的训练和识别
 def creatModel():
-	input_data = Input(name='the_input', shape=(800, 200, 1))
-	# 800,200,32
+	input_data = Input(name='the_input', shape=(2000, 200, 1))
+	# 1000,200,32
 	layer_h1 = Conv2D(32, (3,3), use_bias=True, activation='relu', padding='same', kernel_initializer='he_normal')(input_data)
 	layer_h1 = BatchNormalization(mode=0,axis=-1)(layer_h1)
 	layer_h2 = Conv2D(32, (3,3), use_bias=True, activation='relu', padding='same', kernel_initializer='he_normal')(layer_h1)
 	layer_h2 = BatchNormalization(axis=-1)(layer_h2)
 	layer_h3 = MaxPooling2D(pool_size=(2,2), strides=None, padding="valid")(layer_h2)
-	# 400,100,64
+	# 500,100,64
 	layer_h4 = Conv2D(64, (3,3), use_bias=True, activation='relu', padding='same', kernel_initializer='he_normal')(layer_h3)
 	layer_h4 = BatchNormalization(axis=-1)(layer_h4)
 	layer_h5 = Conv2D(64, (3,3), use_bias=True, activation='relu', padding='same', kernel_initializer='he_normal')(layer_h4)
 	layer_h5 = BatchNormalization(axis=-1)(layer_h5)
 	layer_h5 = MaxPooling2D(pool_size=(2,2), strides=None, padding="valid")(layer_h5)
-	# 200,50,128
+	# 250,50,128
 	layer_h6 = Conv2D(128, (3,3), use_bias=True, activation='relu', padding='same', kernel_initializer='he_normal')(layer_h5)
 	layer_h6 = BatchNormalization(axis=-1)(layer_h6)
 	layer_h7 = Conv2D(128, (3,3), use_bias=True, activation='relu', padding='same', kernel_initializer='he_normal')(layer_h6)
 	layer_h7 = BatchNormalization(axis=-1)(layer_h7)
 	layer_h7 = MaxPooling2D(pool_size=(2,2), strides=None, padding="valid")(layer_h7)
-	# 100,25,128
+	# 125,25,128
 	layer_h8 = Conv2D(128, (1,1), use_bias=True, activation='relu', padding='same', kernel_initializer='he_normal')(layer_h7)
 	layer_h8 = BatchNormalization(axis=-1)(layer_h8)
 	layer_h9 = Conv2D(128, (3,3), use_bias=True, activation='relu', padding='same', kernel_initializer='he_normal')(layer_h8)
 	layer_h9 = BatchNormalization(axis=-1)(layer_h9)
-	# 100,25,128
+	# 125,25,128
 	layer_h10 = Conv2D(128, (1,1), use_bias=True, activation='relu', padding='same', kernel_initializer='he_normal')(layer_h9)
 	layer_h10 = BatchNormalization(axis=-1)(layer_h10)
 	layer_h11 = Conv2D(128, (3,3), use_bias=True, activation='relu', padding='same', kernel_initializer='he_normal')(layer_h10)
 	layer_h11 = BatchNormalization(axis=-1)(layer_h11)
 	# Reshape层
-	layer_h12 = Reshape((100, 3200))(layer_h11) 
+	layer_h12 = Reshape((250, 3200))(layer_h11) 
 	# 全连接层
 	layer_h13 = Dense(256, activation="relu", use_bias=True, kernel_initializer='he_normal')(layer_h12)
 	layer_h13 = BatchNormalization(axis=1)(layer_h13)
@@ -92,7 +92,7 @@ def creatModel():
 	#rms = RMSprop(lr=0.01,rho=0.9,epsilon=1e-06)		
 	opt = Adam(lr = 0.01, beta_1 = 0.9, beta_2 = 0.999, decay = 0.0, epsilon = 10e-8)
 	#ada_d = Adadelta(lr=0.01, rho=0.95, epsilon=1e-06)
-	model=multi_gpu_model(model,gpus=2)
+	#model=multi_gpu_model(model,gpus=2)
 	model.compile(loss={'ctc': lambda y_true, output: output}, optimizer=opt)
 	#test_func = K.function([input_data], [output])
 	print("model compiled successful!")
@@ -108,7 +108,7 @@ def creatModel():
 def decode_ctc(num_result, num2word):
 	result = num_result[:, :, :]
 	in_len = np.zeros((1), dtype = np.int32)
-	in_len[0] = 100;
+	in_len[0] = 250;
 	r = K.ctc_decode(result, in_len, greedy = True, beam_width=1, top_paths=1)
 	r1 = K.get_value(r[0][0])
 	r1 = r1[0]
@@ -124,8 +124,8 @@ def decode_ctc(num_result, num2word):
 '''
 # -----------------------------------------------------------------------------------------------------
 # 训练模型
-def train(datapath = 'data/',
-		batch_size = 4, 
+def train(datapath = 'E:/my_ch_speech_recognition/acoustic_model/data/',
+		batch_size = 2, 
 		steps_per_epoch = 1000, 
 		epochs = 1):
 	# 准备训练所需数据
@@ -133,10 +133,10 @@ def train(datapath = 'data/',
 	yielddatas = p.data_generator()
 	# 导入模型结构，训练模型，保存模型参数
 	model, model_data = creatModel()
-	if os.path.exists('speech_model/model_cnn_fbank.mdl'):
-		model.load_weights('speech_model/model_cnn_fbank.mdl')
+	if os.path.exists('model_cnn_full.mdl'):
+		model.load_weights('model_cnn_full.mdl')
 	model.fit_generator(yielddatas, steps_per_epoch=steps_per_epoch, epochs=1)
-	model.save_weights('speech_model/model_cnn_fbank.mdl')
+	model.save_weights('model_cnn_full.mdl')
 
 
 # -----------------------------------------------------------------------------------------------------
