@@ -101,14 +101,19 @@ class get_data():
 		stcmds_num = len(self.stcmds_wav_paths)
 		aishell_num = len(self.aishell_wav_paths)
 		primewd_num = len(self.primewords_wav_paths)
+		loop = -1
 		while True:
+			loop = loop + 1
 			feats = []
 			labels = []
 			input_lengths = []
 			label_lengths = []
 			for i in range(self.batch_size):
 				# 获取随机获得的一个数字，由这个随机数字获得一个id，通过id选择数据
-				wav_choice = random.randint(0, self.total_data_num - 1)
+				if self.read_type == 'train':
+					wav_choice = random.randint(0, self.total_data_num - 1)
+				else:	# 测试模式下不需要打乱数据顺序
+					wav_choice = loop * self.batch_size + i
 				#print('wav choice is:', wav_choice)
 				if wav_choice < thchs30_num:
 					wavpath = self.thchs30_wav_paths[self.thchs30_label_ids[wav_choice]]
@@ -168,7 +173,32 @@ class get_data():
 
 
 
+	def label_generator(self):
+		thchs30_num = len(self.thchs30_wav_paths)
+		stcmds_num = len(self.stcmds_wav_paths)
+		aishell_num = len(self.aishell_wav_paths)
+		primewd_num = len(self.primewords_wav_paths)
+		loop = 39
+		while True:
+			loop = loop + 1
+			for i in range(self.batch_size):
+				# 获取随机获得的一个数字，由这个随机数字获得一个id，通过id选择数据
+				if self.read_type == 'train':
+					wav_choice = random.randint(0, self.total_data_num - 1)
+				else:	# 测试模式下不需要打乱数据顺序
+					wav_choice = loop * self.batch_size + i
+				#print('wav choice is:', wav_choice)
+				if wav_choice < thchs30_num:
+					label = self.thchs30_label_dict[self.thchs30_label_ids[wav_choice]]
+				elif wav_choice < (thchs30_num + stcmds_num):
+					label = self.stcmds_label_dict[self.stcmds_label_ids[wav_choice - thchs30_num]]
+				elif wav_choice < (thchs30_num + stcmds_num + aishell_num):
+					label = self.aishell_label_dict[self.aishell_label_ids[wav_choice - thchs30_num - stcmds_num]]
+				else:
+					label = self.primewords_label_dict[self.primewords_label_ids[wav_choice - thchs30_num - stcmds_num - aishell_num]]
 
-p = get_data()
-print(p.dict_len)
+			yield label
+
+
+
 

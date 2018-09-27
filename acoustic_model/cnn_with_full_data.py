@@ -9,6 +9,7 @@
 import os
 import random
 import sys
+import difflib
 import numpy as np
 import scipy.io.wavfile as wav
 import tensorflow as tf
@@ -25,7 +26,7 @@ from keras.layers.recurrent import GRU
 from keras.preprocessing.sequence import pad_sequences
 #from keras.utils import multi_gpu_model
 from extra_utils.GetData import get_data
-
+from extra_utils.commons import GetEditDistance
 
 
 # -----------------------------------------------------------------------------------------------------
@@ -153,13 +154,47 @@ def test(datapath = 'data/',
 	yielddatas = p.data_generator()
 	# 载入训练好的模型，并进行识别
 	model, model_data = creatModel()
-	model.load_weights('speech_model/model_cnn_fbank.mdl')
+	model.load_weights('model_cnn_full.mdl')
 	result = model_data.predict_generator(yielddatas, steps=1)
 	print(result.shape)
 	# 将数字结果转化为文本结果
 	result, text = decode_ctc(result, num2word)
 	print('数字结果： ', result)
 	print('文本结果：', text)
+
+
+
+# 测试模型
+# 通过batch_size和steps来增减训练数据大小，batch_size * steps < 数据量 test 16744|dev 20865 
+def test_batch(datapath = 'data/',
+		batch_size = 4):
+	# 准备测试数据，以及生成字典
+	p = get_data(datapath = datapath, read_type = 'test', batch_size = batch_size)
+	num2word = p.label_dict
+	yielddatas = p.data_generator()
+	# 载入训练好的模型，并进行识别
+	model, model_data = creatModel()
+	model.load_weights('model_cnn_full.mdl')
+	# 通过修改steps增减测试数据
+	result = model_data.predict_generator(yielddatas, steps=2)
+	#print(result.shape)
+	pres = []
+	for subresult in result:
+		subresult = subresult.reshape((1,subresult.shape[0],subresult.shape[1]))
+		pre, text = decode_ctc(subresult, num2word)
+		#print(text)
+		pres.append(pre)
+	#print(pres)
+	# 获得识别结果，通过将每个识别结果与label进行比对，获得总的识别率
+	q = get_data(datapath = datapath, read_type = 'test', batch_size = 1)
+	label_gen = q.label_generator()
+	total_len = 0
+	total_err = 0
+	for pre in pres:
+		label = label_gen.__next__()
+		total_len += len(label)
+		total_err += GetEditDistance(pre, label)
+	print('word error rate is :', total_err/total_len*100, '%')
 
 
 # -----------------------------------------------------------------------------------------------------
@@ -171,9 +206,9 @@ def test(datapath = 'data/',
 if __name__ == '__main__':
 	# 通过python gru_ctc_am.py [run type]进行测试
 	#run_type = sys.argv[1]
-	run_type = 'train'
+	run_type = 'test'
 	if run_type == 'test':
-		test()
+		test_batch()
 	elif run_type == 'train':
 		for x in range(10):
 			train()
