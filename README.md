@@ -46,7 +46,7 @@
    ```
 
 
-直接运行训练就可以达到90%的识别率。
+直接运行训练最优结果可以达到90%的识别率。
 
 [我的github: https://github.com/audier](https://github.com/audier)
 
