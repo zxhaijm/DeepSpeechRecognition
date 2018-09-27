@@ -5,7 +5,7 @@
 ### 基于python的中文语音识别系统.
 包含声学模型和语言模型两个部分组成，两个模型都是基于神经网络。
 
-- 声学模型 - `acoustic_model`文件夹下
+- 声学模型 - `acoustic_model`文件夹下，**如果想直接运行，建议直接运行**`cnn_with_full.py`
    - 该项目实现了GRU-CTC中文语音识别声音模型，所有代码都在`gru_ctc_am.py`中，包括：
    - 增加了基于科大讯飞DFCNN的CNN-CTC结构的中文语音识别模型`cnn_ctc_am.py`，与GRU相比，对网络结构进行了稍加改造。
    - 完全使用DFCNN框架搭建声学模型，稍加改动，将部分卷积层改为inception，使用时频图作为输入，`cnn_with_fbank.py`。

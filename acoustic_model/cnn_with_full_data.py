@@ -2,7 +2,7 @@
 '''
 &usage:		CNN-CTC的中文语音识别模型
 @author:	hongwen sun
-#feat_in:	fbank[800,200]
+#feat_in:	fbank[2000,200]
 #net_str:	cnn32*2 -> cnn64*2 -> cnn128*6 -> dense*2 -> softmax -> ctc_cost
 '''
 # -----------------------------------------------------------------------------------------------------
@@ -164,7 +164,7 @@ def test(datapath = 'data/',
 
 
 
-# 测试模型
+# 测试模型，测试多条语音数据，输出识别率
 # 通过batch_size和steps来增减训练数据大小，batch_size * steps < 数据量 test 16744|dev 20865 
 def test_batch(datapath = 'data/',
 		batch_size = 4):
