@@ -50,4 +50,6 @@
 
 [我的github: https://github.com/audier](https://github.com/audier)
 
-[我的博客: https://blog.csdn.net/chinatelecom08](https://blog.csdn.net/chinatelecom08)
+[我的github博客: audier.github.io](https://audier.github.io)
+
+[我的csdn博客: https://blog.csdn.net/chinatelecom08](https://blog.csdn.net/chinatelecom08)
