@@ -130,7 +130,7 @@ class get_data():
 				# wavpath是一个音频文件路径， label是数字化后长度为50的array
 				# 提取特征，生成数据
 				fbank_feat = compute_fbank(wavpath)
-				input_length = fbank_feat.shape[1]//8 + 1
+				input_length = min((fbank_feat.shape[1]//8 + 1), 250)
 				fbank_feat = pad_sequences(fbank_feat, maxlen=2000, dtype='float', padding='post', truncating='post').T
 				fbank_feat = fbank_feat.reshape(fbank_feat.shape[0], fbank_feat.shape[1], 1)
 				input_lengths.append(input_length)

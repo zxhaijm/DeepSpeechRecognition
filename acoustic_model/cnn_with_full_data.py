@@ -109,7 +109,7 @@ def creatModel():
 def decode_ctc(num_result, num2word):
 	result = num_result[:, :, :]
 	in_len = np.zeros((1), dtype = np.int32)
-	in_len[0] = 250;
+	in_len[0] = result.shape[1];
 	r = K.ctc_decode(result, in_len, greedy = True, beam_width=1, top_paths=1)
 	r1 = K.get_value(r[0][0])
 	r1 = r1[0]
