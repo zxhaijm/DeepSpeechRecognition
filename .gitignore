@@ -15,3 +15,6 @@ language_model/log/model/events.out.tfevents.1535938436.DESKTOP-KLLCF4R
 language_model/data/vocab.pkl
 language_model/data/zh.tsv
 some_expriment/linshi.py
+*.py
+*.wav
+acoustic_model/.ipynb_checkpoints/CNN+CTC_tutorial-checkpoint.ipynb
