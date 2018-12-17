@@ -3,7 +3,10 @@
 [![GPL-3.0 Licensed](https://img.shields.io/badge/License-GPL3.0-blue.svg?style=flat)](https://opensource.org/licenses/GPL-3.0) [![TensorFlow Version](https://img.shields.io/badge/Tensorflow-1.4+-blue.svg)](https://www.tensorflow.org/) [![Keras Version](https://img.shields.io/badge/Keras-2.0+-blue.svg)](https://keras.io/) [![Python Version](https://img.shields.io/badge/Python-3.x-blue.svg)](https://www.python.org/) 
 
 ### 基于python的中文语音识别系统.
-包含声学模型和语言模型两个部分组成，两个模型都是基于神经网络。
+包含声学模型和语言模型两个部分组成，两个模型都是基于神经网络。.
+新增语音识别入门tutorial，有详细实现步骤：https://github.com/audier/my_ch_speech_recognition/tree/master/tutorial
+包括：声学模型：cnn+ctc; 语言模型：cbhg, self-attention;
+     
 
 - 声学模型 - `acoustic_model`文件夹下，**建议直接运行**`cnn_with_full.py`
    - 该项目实现了GRU-CTC中文语音识别声音模型，所有代码都在`gru_ctc_am.py`中，包括：
