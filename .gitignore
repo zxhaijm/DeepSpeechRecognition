@@ -18,3 +18,4 @@ some_expriment/linshi.py
 *.py
 *.wav
 acoustic_model/.ipynb_checkpoints/CNN+CTC_tutorial-checkpoint.ipynb
+*.DESKTOP-KLLCF4R
