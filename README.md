@@ -2,6 +2,7 @@
 
 [![GPL-3.0 Licensed](https://img.shields.io/badge/License-GPL3.0-blue.svg?style=flat)](https://opensource.org/licenses/GPL-3.0) [![TensorFlow Version](https://img.shields.io/badge/Tensorflow-1.4+-blue.svg)](https://www.tensorflow.org/) [![Keras Version](https://img.shields.io/badge/Keras-2.0+-blue.svg)](https://keras.io/) [![Python Version](https://img.shields.io/badge/Python-3.x-blue.svg)](https://www.python.org/) 
 
+如果觉得有用的话，小手给个star吧~
 
 ## 1. Introduction
 该系统实现了语音识别中的声学模型和语言模型，其中声学模型包括CNN-CTC、GRU-CTC、CNN-RNN-CTC，语言模型包含[transformer](https://jalammar.github.io/illustrated-transformer/)、[CBHG](https://github.com/crownpku/Somiao-Pinyin)，数据集包含stc、primewords、Aishell、thchs30四个数据集。
