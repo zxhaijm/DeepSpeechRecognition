@@ -1,65 +1,57 @@
-# 1.升学模型训练
 import os
 import tensorflow as tf
-from random import shuffle
+from utils import get_data, data_hparams
+
+
+# 准备训练所需数据
+data_args = data_hparams()
+data_args.data_length = 10
+train_data = get_data(data_args)
+
+
+# 1.声学模型训练-----------------------------------
 from model_speech.cnn_ctc import Am, am_hparams
-from model_speech.utils import thchs30
-
-total_num = 100
-batch_size = 4
-epochs = 1
-
-am_data = thchs30('E:\\DATA\\thchs30\\data_thchs30')
-
 am_args = am_hparams()
-am_args.vocab_size = len(am_data.vocab)
-
+am_args.vocab_size = len(train_data.am_vocab)
 am = Am(am_args)
-
-batch_num = total_num // 4
-shuffle_list = [i for i in range(total_num)]
-
 if os.path.exists('logs_am/model.h5'):
     print('load acoustic model...')
+    am.ctc_model.load_weights('logs_am/model.h5')
+
+epochs = 0
+batch_num = len(train_data.wav_lst) // train_data.batch_size
 
 for k in range(epochs):
     print('this is the', k+1, 'th epochs trainning !!!')
     #shuffle(shuffle_list)
-    batch = am_data.get_batch(batch_size, shuffle_list)
+    batch = train_data.get_am_batch()
     am.ctc_model.fit_generator(batch, steps_per_epoch=batch_num, epochs=1)
 
 am.ctc_model.save_weights('logs_am/model.h5')
 
 
-
-
 # 2.语言模型训练-------------------------------------------
 from model_language.transformer import Lm, lm_hparams
-from model_language.utils import get_data
 
 
-total_num = 100
-batch_size = 4
-epochs = 1
-
-lm_data = get_data("data/lm/lm_data.txt")
 lm_args = lm_hparams()
-lm_args.input_vocab_size = len(lm_data.pny2id)
-lm_args.label_vocab_size = len(lm_data.han2id)
-
+lm_args.input_vocab_size = len(train_data.pny_vocab)
+lm_args.label_vocab_size = len(train_data.han_vocab)
 lm = Lm(lm_args)
 
-saver =tf.train.Saver()
-with tf.Session() as sess:
+epochs = 20
+with lm.graph.as_default():
+    saver =tf.train.Saver()
+with tf.Session(graph=lm.graph) as sess:
     merged = tf.summary.merge_all()
     sess.run(tf.global_variables_initializer())
     if os.path.exists('logs_lm/model.meta'):
+        print('loading language model...')
         saver.restore(sess, 'logs_lm/model')
     writer = tf.summary.FileWriter('logs_lm/tensorboard', tf.get_default_graph())
     for k in range(epochs):
         total_loss = 0
-        batch_num = total_num // batch_size
-        batch = lm_data.get_batch(batch_size)
+        batch = train_data.get_lm_batch()
         for i in range(batch_num):
             input_batch, label_batch = next(batch)
             feed = {lm.x: input_batch, lm.y: label_batch}
