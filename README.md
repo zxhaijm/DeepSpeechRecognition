@@ -5,7 +5,7 @@
 如果觉得有用的话，小手给个star吧~
 
 ## 1. Introduction
-该系统实现了语音识别中的声学模型和语言模型，其中声学模型包括CNN-CTC、GRU-CTC、CNN-RNN-CTC，语言模型包含[transformer](https://jalammar.github.io/illustrated-transformer/)、[CBHG](https://github.com/crownpku/Somiao-Pinyin)，数据集包含stc、primewords、Aishell、thchs30四个数据集。
+该系统实现了基于深度框架的语音识别中的声学模型和语言模型建模，其中声学模型包括CNN-CTC、GRU-CTC、CNN-RNN-CTC，语言模型包含[transformer](https://jalammar.github.io/illustrated-transformer/)、[CBHG](https://github.com/crownpku/Somiao-Pinyin)，数据集包含stc、primewords、Aishell、thchs30四个数据集。
 
 本系统更整体介绍：https://blog.csdn.net/chinatelecom08/article/details/82557715
 
