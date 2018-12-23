@@ -26,6 +26,7 @@
 - 论文地址：https://arxiv.org/abs/1706.03762。
 
 - tutorial：https://github.com/audier/my_ch_speech_recognition/tree/master/tutorial
+
 基于CBHG结构的语言模型`model_language\cbhg.py`，该模型之前用于谷歌声音合成，移植到该项目中作为基于神经网络的语言模型。
 
 - 原理地址：https://github.com/crownpku/Somiao-Pinyin
