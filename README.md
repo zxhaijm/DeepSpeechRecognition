@@ -8,7 +8,15 @@
 
 本系统更整体介绍：https://blog.csdn.net/chinatelecom08/article/details/82557715
 
+本项目现已训练一个迷你的语音识别系统，将项目下载到本地上，运行`test.py`，不出意外能够进行识别，结果如下：
 
+     the  0 th example.
+    文本结果： lv4 shi4 yang2 chun1 yan1 jing3 da4 kuai4 wen2 zhang1 de di3 se4 si4 yue4 de lin2 luan2 geng4 shi4 lv4 de2 xian1 huo2 xiu4 mei4 shi1 yi4 ang4 ran2
+    原文结果： lv4 shi4 yang2 chun1 yan1 jing3 da4 kuai4 wen2 zhang1 de di3 se4 si4 yue4 de lin2 luan2 geng4 shi4 lv4 de2 xian1 huo2 xiu4 mei4 shi1 yi4 ang4 ran2
+    原文汉字： 绿是阳春烟景大块文章的底色四月的林峦更是绿得鲜活秀媚诗意盎然
+    识别结果： 绿是阳春烟景大块文章的底色四月的林峦更是绿得鲜活秀媚诗意盎然
+
+若自己建立模型则需要删除现有模型，重新配置参数训练，具体实现流程参考本页最后。
 
 ## 2. 声学模型
 
@@ -16,7 +24,7 @@
 
 - 论文地址：http://www.infocomm-journal.com/dxkx/CN/article/openArticlePDFabs.jsp?id=166970
 
-- tutorial：https://github.com/audier/my_ch_speech_recognition/tree/master/tutorial
+- tutorial：https://blog.csdn.net/chinatelecom08/article/details/85013535
 
 
 ## 3. 语言模型
@@ -25,7 +33,7 @@
 
 - 论文地址：https://arxiv.org/abs/1706.03762。
 
-- tutorial：https://github.com/audier/my_ch_speech_recognition/tree/master/tutorial
+- tutorial：https://blog.csdn.net/chinatelecom08/article/details/85051817
 
 基于CBHG结构的语言模型`model_language\cbhg.py`，该模型之前用于谷歌声音合成，移植到该项目中作为基于神经网络的语言模型。
 
@@ -37,16 +45,18 @@
 ## 4. 数据集
 包括stc、primewords、Aishell、thchs30四个数据集，共计约430小时, 相关链接：[http://www.openslr.org/resources.php](http://www.openslr.org/resources.php)
 
-      |Name | train | dev | test 
-      |- | :-: | -: | -:
-      |aishell | 120098| 14326 | 7176
-      |primewords | 40783 | 5046 | 5073
-      |thchs-30 | 10000 | 893 | 2495
-      |st-cmd | 10000 | 600 | 2000
 
-数据标签整理在`data`路径下，其中primewords、st-cmd目前未分割数据集。
+|Name | train | dev | test 
+|- | :-: | -: | -:
+|aishell | 120098| 14326 | 7176
+|primewords | 40783 | 5046 | 5073
+|thchs-30 | 10000 | 893 | 2495
+|st-cmd | 10000 | 600 | 2000
 
-若需要使用上述数据集，只需解压到统一路径下，然后设置utils.py中datapath的路径即可。
+
+数据标签整理在`data`路径下，其中primewords、st-cmd目前未区分训练集测试集。
+
+若需要使用所有数据集，只需解压到统一路径下，然后设置utils.py中datapath的路径即可。
 
 与数据相关参数在`utils.py`中：
 - data_type: train, test, dev
@@ -71,8 +81,7 @@ def data_hparams():
       return params
 ```
 
-## 5. 使用示例
-### 训练
+## 5. 配置
 
 使用train.py文件进行模型的训练。
 
@@ -89,11 +98,14 @@ def data_hparams():
 `from model_language.cbhg import Lm, lm_hparams`
 
 ### 模型识别
+
 使用test.py检查模型识别效果。
+模型选择需和训练一致。
 
-### 一个简单的例子
 
-#### 1. 声学模型训练
+# 一个简单的例子
+
+### 1. 声学模型训练
 
 train.py文件
 
@@ -211,21 +223,21 @@ def decode_ctc(num_result, num2word):
 
 
 ```python
-# 0.准备解码所需数据------------------------------
+# 0. 准备解码所需字典，需和训练一致，也可以将字典保存到本地，直接进行读取
 from utils import get_data, data_hparams
 data_args = data_hparams()
-data_args.data_length = 10
+data_args.data_length = 10 # 重新训练需要注释该行
 train_data = get_data(data_args)
 
+
+# 3. 准备测试所需数据， 不必和训练数据一致，通过设置data_args.data_type测试，
+#    此处应设为'test'，我用了'train'因为演示模型较小，如果使用'test'看不出效果，
+#    且会出现未出现的词。
+data_args.data_type = 'train'
+test_data = get_data(data_args)
 am_batch = train_data.get_am_batch()
 lm_batch = train_data.get_lm_batch()
 ```
-
-    get source list...
-    load  thchs_train.txt  data...
-    
-
-    
     
 
 #### 加载声学模型和语言模型

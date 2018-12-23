@@ -5,7 +5,7 @@ from utils import get_data, data_hparams
 
 # 准备训练所需数据
 data_args = data_hparams()
-data_args.data_length = 10
+#data_args.data_length = 10
 train_data = get_data(data_args)
 
 

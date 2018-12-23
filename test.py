@@ -17,12 +17,10 @@ def decode_ctc(num_result, num2word):
 	return r1, text
 
 
-
-
-# 0.准备解码所需数据------------------------------
+# 0.准备解码所需字典，需和训练一致，也可以将字典保存到本地，直接进行读取
 from utils import get_data, data_hparams
 data_args = data_hparams()
-data_args.data_length = 10
+data_args.data_length = 10 # 重新训练需要注释该行
 train_data = get_data(data_args)
 
 
@@ -49,8 +47,11 @@ with lm.graph.as_default():
 with sess.as_default():
     saver.restore(sess, 'logs_lm/model')
 
-
-
+# 3. 准备测试所需数据， 不必和训练数据一致，通过设置data_args.data_type测试，
+#    此处应设为'test'，我用了'train'因为演示模型较小，如果使用'test'看不出效果，
+#    且会出现未出现的词。
+data_args.data_type = 'train'
+test_data = get_data(data_args)
 am_batch = train_data.get_am_batch()
 lm_batch = train_data.get_lm_batch()
 
