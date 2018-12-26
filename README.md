@@ -1,6 +1,6 @@
 # 基于深度学习的中文语音识别系统
 
-[![GPL-3.0 Licensed](https://img.shields.io/badge/License-GPL3.0-blue.svg?style=flat)](https://opensource.org/licenses/GPL-3.0) [![TensorFlow Version](https://img.shields.io/badge/Tensorflow-1.4+-blue.svg)](https://www.tensorflow.org/) [![Keras Version](https://img.shields.io/badge/Keras-2.0+-blue.svg)](https://keras.io/) [![Python Version](https://img.shields.io/badge/Python-3.x-blue.svg)](https://www.python.org/) 
+[![GPL-3.0 Licensed](https://img.shields.io/badge/License-GPL3.0-blue.svg?style=flat)](https://opensource.org/licenses/GPL-3.0) [![TensorFlow Version](https://img.shields.io/badge/Tensorflow-1.4+-blue.svg)](https://www.tensorflow.org/) [![Keras Version](https://img.shields.io/badge/Keras-2.0+-blue.svg)](https://keras.io/) [![Python Version](https://img.shields.io/badge/Python-3.x-blue.svg)](https://www.python.org/)
 
 如果觉得有用的话，小手给个star吧~
 
@@ -9,7 +9,7 @@
 
 本系统更整体介绍：https://blog.csdn.net/chinatelecom08/article/details/82557715
 
-本项目现已训练一个迷你的语音识别系统，将项目下载到本地上，运行`test.py`，不出意外能够进行识别，结果如下：
+本项目现已训练一个迷你的语音识别系统，将项目下载到本地上，下载[thchs数据集](http://www.openslr.org/resources/18/data_thchs30.tgz)并解压至data，运行`test.py`，不出意外能够进行识别，结果如下：
 
      the  0 th example.
     文本结果： lv4 shi4 yang2 chun1 yan1 jing3 da4 kuai4 wen2 zhang1 de di3 se4 si4 yue4 de lin2 luan2 geng4 shi4 lv4 de2 xian1 huo2 xiu4 mei4 shi1 yi4 ang4 ran2
@@ -41,13 +41,13 @@
 - 原理地址：https://github.com/crownpku/Somiao-Pinyin
 
 - tutorial：https://blog.csdn.net/chinatelecom08/article/details/85048019
-     
+
 
 ## 4. 数据集
 包括stc、primewords、Aishell、thchs30四个数据集，共计约430小时, 相关链接：[http://www.openslr.org/resources.php](http://www.openslr.org/resources.php)
 
 
-|Name | train | dev | test 
+|Name | train | dev | test
 |- | :-: | -: | -:
 |aishell | 120098| 14326 | 7176
 |primewords | 40783 | 5046 | 5073
@@ -158,7 +158,7 @@ am.ctc_model.save_weights('logs_am/model.h5')
     make lm hanzi vocab...
     100%|████████████████████████████████████████████████████████████████████████████████| 10/10 [00:00<00:00, 9950.90it/s]
     Using TensorFlow backend.
-    
+
 
     _________________________________________________________________
     Layer (type)                 Output Shape              Param #   
@@ -222,7 +222,7 @@ am.ctc_model.save_weights('logs_am/model.h5')
     Non-trainable params: 1,920
     _________________________________________________________________
     load acoustic model...
-    
+
 
 # 2.语言模型训练
 
@@ -266,7 +266,7 @@ with tf.Session(graph=lm.graph) as sess:
 
     loading language model...
     INFO:tensorflow:Restoring parameters from logs_lm/model
-    
+
 
 # 3. 模型测试
 整合声学模型和语言模型
@@ -328,7 +328,7 @@ lm_batch = test_data.get_lm_batch()
     100%|██████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:00<?, ?it/s]
     make lm hanzi vocab...
     100%|████████████████████████████████████████████████████████████████████████████████| 10/10 [00:00<00:00, 9953.26it/s]
-    
+
 
 ## 加载声学模型和语言模型
 
@@ -422,7 +422,7 @@ with sess.as_default():
     loading acoustic model...
     loading language model...
     INFO:tensorflow:Restoring parameters from logs_lm/model
-    
+
 
 ## 使用语音识别系统
 
@@ -453,37 +453,37 @@ for i in range(5):
 sess.close()
 ```
 
-    
+
      the  0 th example.
     文本结果： lv4 shi4 yang2 chun1 yan1 jing3 da4 kuai4 wen2 zhang1 de di3 se4 si4 yue4 de lin2 luan2 geng4 shi4 lv4 de2 xian1 huo2 xiu4 mei4 shi1 yi4 ang4 ran2
     原文结果： lv4 shi4 yang2 chun1 yan1 jing3 da4 kuai4 wen2 zhang1 de di3 se4 si4 yue4 de lin2 luan2 geng4 shi4 lv4 de2 xian1 huo2 xiu4 mei4 shi1 yi4 ang4 ran2
     原文汉字： 绿是阳春烟景大块文章的底色四月的林峦更是绿得鲜活秀媚诗意盎然
     识别结果： 绿是阳春烟景大块文章的底色四月的林峦更是绿得鲜活秀媚诗意盎然
-    
+
      the  1 th example.
     文本结果： ta1 jin3 ping2 yao1 bu4 de li4 liang4 zai4 yong3 dao4 shang4 xia4 fan1 teng2 yong3 dong4 she2 xing2 zhuang4 ru2 hai3 tun2 yi4 zhi2 yi3 yi1 tou2 de you1 shi4 ling3 xian1
     原文结果： ta1 jin3 ping2 yao1 bu4 de li4 liang4 zai4 yong3 dao4 shang4 xia4 fan1 teng2 yong3 dong4 she2 xing2 zhuang4 ru2 hai3 tun2 yi4 zhi2 yi3 yi1 tou2 de you1 shi4 ling3 xian1
     原文汉字： 他仅凭腰部的力量在泳道上下翻腾蛹动蛇行状如海豚一直以一头的优势领先
     识别结果： 他仅凭腰部的力量在泳道上下翻腾蛹动蛇行状如海豚一直以一头的优势领先
-    
+
      the  2 th example.
     文本结果： pao4 yan3 da3 hao3 le zha4 yao4 zen3 me zhuang1 yue4 zheng4 cai2 yao3 le yao3 ya2 shu1 di4 tuo1 qu4 yi1 fu2 guang1 bang3 zi chong1 jin4 le shui3 cuan4 dong4
     原文结果： pao4 yan3 da3 hao3 le zha4 yao4 zen3 me zhuang1 yue4 zheng4 cai2 yao3 le yao3 ya2 shu1 di4 tuo1 qu4 yi1 fu2 guang1 bang3 zi chong1 jin4 le shui3 cuan4 dong4
     原文汉字： 炮眼打好了炸药怎么装岳正才咬了咬牙倏地脱去衣服光膀子冲进了水窜洞
     识别结果： 炮眼打好了炸药怎么装岳正才咬了咬牙倏地脱去衣服光膀子冲进了水窜洞
-    
+
      the  3 th example.
     文本结果： ke3 shei2 zhi1 wen2 wan2 hou4 ta1 yi1 zhao4 jing4 zi zhi1 jian4 zuo3 xia4 yan3 jian3 de xian4 you4 cu1 you4 hei1 yu3 you4 ce4 ming2 xian3 bu2 dui4 cheng1
     原文结果： ke3 shei2 zhi1 wen2 wan2 hou4 ta1 yi1 zhao4 jing4 zi zhi1 jian4 zuo3 xia4 yan3 jian3 de xian4 you4 cu1 you4 hei1 yu3 you4 ce4 ming2 xian3 bu2 dui4 cheng1
     原文汉字： 可谁知纹完后她一照镜子只见左下眼睑的线又粗又黑与右侧明显不对称
     识别结果： 可谁知纹完后她一照镜子知见左下眼睑的线右粗右黑与右侧明显不对称
-    
+
      the  4 th example.
     文本结果： yi1 jin4 men2 wo3 bei4 jing1 dai1 le zhe4 hu4 ming2 jiao4 pang2 ji2 de lao3 nong2 shi4 kang4 mei3 yuan2 chao2 fu4 shang1 hui2 xiang1 de lao3 bing1 qi1 zi3 chang2 nian2 you3 bing4 jia1 tu2 si4 bi4 yi1 pin2 ru2 xi3
     原文结果： yi1 jin4 men2 wo3 bei4 jing1 dai1 le zhe4 hu4 ming2 jiao4 pang2 ji2 de lao3 nong2 shi4 kang4 mei3 yuan2 chao2 fu4 shang1 hui2 xiang1 de lao3 bing1 qi1 zi3 chang2 nian2 you3 bing4 jia1 tu2 si4 bi4 yi1 pin2 ru2 xi3
     原文汉字： 一进门我被惊呆了这户名叫庞吉的老农是抗美援朝负伤回乡的老兵妻子长年有病家徒四壁一贫如洗
     识别结果： 一进门我被惊呆了这户名叫庞吉的老农是抗美援朝负伤回乡的老兵妻子长年有病家徒四壁一贫如洗
-    
+
 
 
 # 相关内容
