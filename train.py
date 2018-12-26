@@ -5,7 +5,7 @@ from utils import get_data, data_hparams
 
 # 准备训练所需数据
 data_args = data_hparams()
-#data_args.data_length = 10
+data_args.data_length = 10
 train_data = get_data(data_args)
 
 
@@ -39,15 +39,17 @@ lm_args.input_vocab_size = len(train_data.pny_vocab)
 lm_args.label_vocab_size = len(train_data.han_vocab)
 lm = Lm(lm_args)
 
-epochs = 20
+epochs = 10
 with lm.graph.as_default():
     saver =tf.train.Saver()
 with tf.Session(graph=lm.graph) as sess:
     merged = tf.summary.merge_all()
     sess.run(tf.global_variables_initializer())
-    if os.path.exists('logs_lm/model.meta'):
+    if os.path.exists('logs_lm/checkpoint'):
         print('loading language model...')
-        saver.restore(sess, 'logs_lm/model')
+        latest = tf.train.latest_checkpoint('logs_lm')
+        add_num = int(latest.split('_')[-1])
+        saver.restore(sess, latest)
     writer = tf.summary.FileWriter('logs_lm/tensorboard', tf.get_default_graph())
     for k in range(epochs):
         total_loss = 0
@@ -62,5 +64,5 @@ with tf.Session(graph=lm.graph) as sess:
                 writer.add_summary(rs, k * batch_num + i)
         if (k+1) % 5 == 0:
             print('epochs', k+1, ': average loss = ', total_loss/batch_num)
-    saver.save(sess, 'logs_lm/model')
+    saver.save(sess, 'logs_lm/model_%d' % (epochs + add_num))
     writer.close()

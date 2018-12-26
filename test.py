@@ -45,7 +45,8 @@ sess = tf.Session(graph=lm.graph)
 with lm.graph.as_default():
     saver =tf.train.Saver()
 with sess.as_default():
-    saver.restore(sess, 'logs_lm/model')
+    latest = tf.train.latest_checkpoint('logs_lm')
+    saver.restore(sess, latest)
 
 # 3. 准备测试所需数据， 不必和训练数据一致，通过设置data_args.data_type测试，
 #    此处应设为'test'，我用了'train'因为演示模型较小，如果使用'test'看不出效果，
