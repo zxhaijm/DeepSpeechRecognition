@@ -97,8 +97,10 @@ class get_data():
 				pad_fbank = np.zeros((fbank.shape[0]//8*8+8, fbank.shape[1]))
 				pad_fbank[:fbank.shape[0], :] = fbank
 				label = self.pny2id(self.pny_lst[index], self.am_vocab)
-				wav_data_lst.append(pad_fbank)
-				label_data_lst.append(label)
+				label_ctc_len = self.ctc_len(label)
+				if pad_fbank.shape[0]//8 >= label_ctc_len:
+					wav_data_lst.append(pad_fbank)
+					label_data_lst.append(label)
 			pad_wav_data, input_length = self.wav_padding(wav_data_lst)
 			pad_label_data, label_length = self.label_padding(label_data_lst)
 			inputs = {'the_inputs': pad_wav_data,
@@ -106,7 +108,7 @@ class get_data():
 					'input_length': input_length,
 					'label_length': label_length,
 					}
-			outputs = {'ctc': np.zeros(pad_wav_data.shape[0],)} 
+			outputs = {'ctc': np.zeros(pad_wav_data.shape[0],)}
 			yield inputs, outputs
 
 	def get_lm_batch(self):
@@ -123,7 +125,7 @@ class get_data():
 
 	def pny2id(self, line, vocab):
 		return [vocab.index(pny) for pny in line]
-	
+
 	def han2id(self, line, vocab):
 		return [vocab.index(han) for han in line]
 
@@ -171,6 +173,15 @@ class get_data():
 					vocab.append(han)
 		return vocab
 
+	def ctc_len(self, label):
+		add_len = 0
+		label_len = len(label)
+		for i in range(label_len - 1):
+			if label[i] == label[i+1]:
+				add_len += 1
+		return label_len + add_len
+
+
 # 对音频文件提取mfcc特征
 def compute_mfcc(file):
 	fs, audio = wav.read(file)
@@ -194,7 +205,7 @@ def compute_fbank(file):
 	for i in range(0, range0_end):
 		p_start = i * 160
 		p_end = p_start + 400
-		data_line = wav_arr[p_start:p_end]	
+		data_line = wav_arr[p_start:p_end]
 		data_line = data_line * w # 加窗
 		data_line = np.abs(fft(data_line))
 		data_input[i]=data_line[0:200] # 设置为400除以2的值（即200）是取一半数据，因为是对称的
