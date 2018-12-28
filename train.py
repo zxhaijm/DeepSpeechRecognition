@@ -3,8 +3,17 @@ import tensorflow as tf
 from utils import get_data, data_hparams
 
 
-# 准备训练所需数据
+# 0.准备训练所需数据------------------------------
 data_args = data_hparams()
+data_args.data_type = 'train'
+data_args.data_path = 'data/'
+data_args.thchs30 = True
+data_args.aishell = False
+data_args.prime = False
+data_args.stcmd = False
+data_args.batch_size = 1
+data_args.data_length = 10
+data_args.shuffle = True
 train_data = get_data(data_args)
 
 
@@ -12,7 +21,11 @@ train_data = get_data(data_args)
 from model_speech.cnn_ctc import Am, am_hparams
 am_args = am_hparams()
 am_args.vocab_size = len(train_data.am_vocab)
+am_args.gpu_nums = 1
+am_args.lr = 0.0008
+am_args.is_training = True
 am = Am(am_args)
+
 if os.path.exists('logs_am/model.h5'):
     print('load acoustic model...')
     am.ctc_model.load_weights('logs_am/model.h5')
@@ -25,16 +38,21 @@ for k in range(epochs):
     batch = train_data.get_am_batch()
     am.ctc_model.fit_generator(batch, steps_per_epoch=batch_num, epochs=1)
 
-am.ctc_model.save_weights('logs_am/model.h5')
+am.ctc_model.save_weights('logs_am/model.h5', by_name=True)
 
 
 # 2.语言模型训练-------------------------------------------
 from model_language.transformer import Lm, lm_hparams
-
-
 lm_args = lm_hparams()
+lm_args.num_heads = 8
+lm_args.num_blocks = 6
 lm_args.input_vocab_size = len(train_data.pny_vocab)
 lm_args.label_vocab_size = len(train_data.han_vocab)
+lm_args.max_length = 100
+lm_args.hidden_units = 512
+lm_args.dropout_rate = 0.2
+lm_args.lr = 0.0003
+lm_args.is_training = True
 lm = Lm(lm_args)
 
 epochs = 10

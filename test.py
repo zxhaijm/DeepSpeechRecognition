@@ -17,9 +17,18 @@ def decode_ctc(num_result, num2word):
 	return r1, text
 
 
-# 0.准备解码所需字典，需和训练一致，也可以将字典保存到本地，直接进行读取
+# 0.准备解码所需字典，参数需和训练一致，也可以将字典保存到本地，直接进行读取
 from utils import get_data, data_hparams
 data_args = data_hparams()
+data_args.data_type = 'train'
+data_args.data_path = 'data/'
+data_args.thchs30 = True
+data_args.aishell = False
+data_args.prime = False
+data_args.stcmd = False
+data_args.batch_size = 1
+data_args.data_length = 10
+data_args.shuffle = True
 train_data = get_data(data_args)
 
 
@@ -28,9 +37,10 @@ from model_speech.cnn_ctc import Am, am_hparams
 
 am_args = am_hparams()
 am_args.vocab_size = len(train_data.am_vocab)
+am_args.is_training = False
 am = Am(am_args)
 print('loading acoustic model...')
-am.ctc_model.load_weights('logs_am/model.h5')
+am.model.load_weights('logs_am/model.h5', by_name=True)
 
 # 2.语言模型-------------------------------------------
 from model_language.transformer import Lm, lm_hparams
