@@ -45,6 +45,7 @@ with lm.graph.as_default():
 with tf.Session(graph=lm.graph) as sess:
     merged = tf.summary.merge_all()
     sess.run(tf.global_variables_initializer())
+    add_num = 0
     if os.path.exists('logs_lm/checkpoint'):
         print('loading language model...')
         latest = tf.train.latest_checkpoint('logs_lm')
