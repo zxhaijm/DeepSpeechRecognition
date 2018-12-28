@@ -28,7 +28,7 @@ am_args.vocab_size = len(train_data.am_vocab)
 am_args.is_training = False
 am = Am(am_args)
 print('loading acoustic model...')
-am.model.load_weights('logs_am/model.h5', by_name=True)
+am.model.load_weights('logs_am/model.h5')
 
 # 2.语言模型-------------------------------------------
 from model_language.transformer import Lm, lm_hparams
