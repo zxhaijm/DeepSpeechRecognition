@@ -53,8 +53,8 @@ with sess.as_default():
 #    且会出现未出现的词。
 data_args.data_type = 'train'
 test_data = get_data(data_args)
-am_batch = train_data.get_am_batch()
-lm_batch = train_data.get_lm_batch()
+am_batch = test_data.get_am_batch()
+lm_batch = test_data.get_lm_batch()
 
 for i in range(5):
     print('\n the ', i, 'th example.')

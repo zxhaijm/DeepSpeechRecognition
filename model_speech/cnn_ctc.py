@@ -67,11 +67,11 @@ class Am():
 # ============================模型组件=================================
 def conv2d(size):
     return Conv2D(size, (3,3), use_bias=True, activation='relu',
-        padding='same', kernel_initializer='he_normal')
+        padding='same', kernel_initializer='he_normal', dropout=0.1)
 
 
 def norm(x):
-    return BatchNormalization(axis=-1)(x)
+    return BatchNormalization(axis=-1, dropout=0.1)(x)
 
 
 def maxpool(x):
@@ -80,7 +80,7 @@ def maxpool(x):
 
 def dense(units, activation="relu"):
     return Dense(units, activation=activation, use_bias=True,
-        kernel_initializer='he_normal')
+        kernel_initializer='he_normal', dropout=0.1)
 
 
 # x.shape=(none, none, none)
