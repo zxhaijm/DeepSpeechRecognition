@@ -1,4 +1,5 @@
 import os
+import difflib
 import numpy as np
 import tensorflow as tf
 import scipy.io.wavfile as wav
@@ -6,7 +7,7 @@ from tqdm import tqdm
 from scipy.fftpack import fft
 from python_speech_features import mfcc
 from random import shuffle
-
+from keras import backend as K
 
 def data_hparams():
     params = tf.contrib.training.HParams(
@@ -212,3 +213,30 @@ def compute_fbank(file):
 	data_input = np.log(data_input + 1)
 	#data_input = data_input[::]
 	return data_input
+
+
+# word error rate------------------------------------
+def GetEditDistance(str1, str2):
+	leven_cost = 0
+	s = difflib.SequenceMatcher(None, str1, str2)
+	for tag, i1, i2, j1, j2 in s.get_opcodes():
+		if tag == 'replace':
+			leven_cost += max(i2-i1, j2-j1)
+		elif tag == 'insert':
+			leven_cost += (j2-j1)
+		elif tag == 'delete':
+			leven_cost += (i2-i1)
+	return leven_cost
+
+# 定义解码器------------------------------------
+def decode_ctc(num_result, num2word):
+	result = num_result[:, :, :]
+	in_len = np.zeros((1), dtype = np.int32)
+	in_len[0] = result.shape[1]
+	r = K.ctc_decode(result, in_len, greedy = True, beam_width=10, top_paths=1)
+	r1 = K.get_value(r[0][0])
+	r1 = r1[0]
+	text = []
+	for i in r1:
+		text.append(num2word[i])
+	return r1, text

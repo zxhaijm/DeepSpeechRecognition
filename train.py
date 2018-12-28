@@ -38,7 +38,7 @@ for k in range(epochs):
     batch = train_data.get_am_batch()
     am.ctc_model.fit_generator(batch, steps_per_epoch=batch_num, epochs=1)
 
-am.ctc_model.save_weights('logs_am/model.h5', by_name=True)
+am.ctc_model.save_weights('logs_am/model.h5')
 
 
 # 2.语言模型训练-------------------------------------------

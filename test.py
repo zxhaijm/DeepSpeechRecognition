@@ -1,20 +1,8 @@
 import os
+import difflib
 import tensorflow as tf
 import numpy as np
-from keras import backend as K
-
-# 定义解码器------------------------------------
-def decode_ctc(num_result, num2word):
-	result = num_result[:, :, :]
-	in_len = np.zeros((1), dtype = np.int32)
-	in_len[0] = result.shape[1]
-	r = K.ctc_decode(result, in_len, greedy = True, beam_width=10, top_paths=1)
-	r1 = K.get_value(r[0][0])
-	r1 = r1[0]
-	text = []
-	for i in r1:
-		text.append(num2word[i])
-	return r1, text
+from utils import decode_ctc, GetEditDistance
 
 
 # 0.准备解码所需字典，参数需和训练一致，也可以将字典保存到本地，直接进行读取
@@ -28,7 +16,7 @@ data_args.prime = False
 data_args.stcmd = False
 data_args.batch_size = 1
 data_args.data_length = 10
-data_args.shuffle = True
+data_args.shuffle = False
 train_data = get_data(data_args)
 
 
@@ -48,6 +36,7 @@ from model_language.transformer import Lm, lm_hparams
 lm_args = lm_hparams()
 lm_args.input_vocab_size = len(train_data.pny_vocab)
 lm_args.label_vocab_size = len(train_data.han_vocab)
+lm_args.dropout_rate = 0.
 print('loading language model...')
 lm = Lm(lm_args)
 sess = tf.Session(graph=lm.graph)
@@ -67,7 +56,8 @@ test_data = get_data(data_args)
 
 # 4. 进行测试-------------------------------------------
 am_batch = test_data.get_am_batch()
-
+word_num = 0
+word_error_num = 0
 for i in range(10):
     print('\n the ', i, 'th example.')
     # 载入训练好的模型，并进行识别
@@ -85,7 +75,11 @@ for i in range(10):
         x = np.array([train_data.pny_vocab.index(pny) for pny in text])
         x = x.reshape(1, -1)
         preds = sess.run(lm.preds, {lm.x: x})
+        label = test_data.han_lst[i]
         got = ''.join(train_data.han_vocab[idx] for idx in preds[0])
-        print('原文汉字：', test_data.han_lst[i])
+        print('原文汉字：', label)
         print('识别结果：', got)
+        word_error_num += min(len(label), GetEditDistance(label, got))
+        word_num += len(label)
+print('词错误率：', word_error_num / word_num)
 sess.close()

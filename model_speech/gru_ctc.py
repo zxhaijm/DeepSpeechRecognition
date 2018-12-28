@@ -67,19 +67,20 @@ class Am():
 
 # ============================模型组件=================================
 def bi_gru(units, x):
+    x = Dropout(0.2)(x)
     y1 = GRU(units, return_sequences=True,
-        kernel_initializer='he_normal', dropout=0.1)(x)
-    y2= GRU(units, return_sequences=True, go_backwards=True,
-        kernel_initializer='he_normal', dropout=0.1)(x)
+        kernel_initializer='he_normal')(x)
+    y2 = GRU(units, return_sequences=True, go_backwards=True,
+        kernel_initializer='he_normal')(x)
     y = add([y1, y2])
     return y
 
-def norm(x):
-    return BatchNormalization(axis=-1, dropout=0.1)(x)
 
 def dense(units, x, activation="relu"):
-    return Dense(units, activation=activation, use_bias=True,
-        kernel_initializer='he_normal', dropout=0.1)(x)
+    x = Dropout(0.2)(x)
+    y = Dense(units, activation=activation, use_bias=True,
+        kernel_initializer='he_normal')(x)
+    return y
 
 def ctc_lambda(args):
     labels, y_pred, input_length, label_length = args

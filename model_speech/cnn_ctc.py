@@ -1,6 +1,6 @@
 import keras
 from keras.layers import Input, Conv2D, BatchNormalization, MaxPooling2D
-from keras.layers import Reshape, Dense, Lambda
+from keras.layers import Reshape, Dense, Dropout, Lambda
 from keras.optimizers import Adam
 from keras import backend as K
 from keras.models import Model
@@ -40,7 +40,9 @@ class Am():
         self.h5 = cnn_cell(128, self.h4, pool=False)
         # 200 / 8 * 128 = 3200
         self.h6 = Reshape((-1, 3200))(self.h5)
+        self.h6 = Dropout(0.2)(self.h6)
         self.h7 = dense(256)(self.h6)
+        self.h7 = Dropout(0.2)(self.h7)
         self.outputs = dense(self.vocab_size, activation='softmax')(self.h7)
         self.model = Model(inputs=self.inputs, outputs=self.outputs)
         self.model.summary()
@@ -67,11 +69,11 @@ class Am():
 # ============================模型组件=================================
 def conv2d(size):
     return Conv2D(size, (3,3), use_bias=True, activation='relu',
-        padding='same', kernel_initializer='he_normal', dropout=0.1)
+        padding='same', kernel_initializer='he_normal')
 
 
 def norm(x):
-    return BatchNormalization(axis=-1, dropout=0.1)(x)
+    return BatchNormalization(axis=-1)(x)
 
 
 def maxpool(x):
@@ -80,7 +82,7 @@ def maxpool(x):
 
 def dense(units, activation="relu"):
     return Dense(units, activation=activation, use_bias=True,
-        kernel_initializer='he_normal', dropout=0.1)
+        kernel_initializer='he_normal')
 
 
 # x.shape=(none, none, none)
