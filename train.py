@@ -28,7 +28,7 @@ am = Am(am_args)
 
 if os.path.exists('logs_am/model.h5'):
     print('load acoustic model...')
-    am.ctc_model.load_weights('logs_am/model.h5')
+    am.ctc_model.load_weights('logs_am/model.h5', by_name=True)
 
 epochs = 10
 batch_num = len(train_data.wav_lst) // train_data.batch_size

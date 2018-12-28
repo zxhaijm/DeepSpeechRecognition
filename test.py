@@ -65,6 +65,7 @@ data_args.shuffle = False
 data_args.batch_size = 1
 test_data = get_data(data_args)
 
+# 4. 进行测试-------------------------------------------
 am_batch = test_data.get_am_batch()
 
 for i in range(10):
