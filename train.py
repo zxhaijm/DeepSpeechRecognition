@@ -5,7 +5,6 @@ from utils import get_data, data_hparams
 
 # 准备训练所需数据
 data_args = data_hparams()
-data_args.data_length = 10
 train_data = get_data(data_args)
 
 
@@ -18,12 +17,11 @@ if os.path.exists('logs_am/model.h5'):
     print('load acoustic model...')
     am.ctc_model.load_weights('logs_am/model.h5')
 
-epochs = 0
+epochs = 10
 batch_num = len(train_data.wav_lst) // train_data.batch_size
 
 for k in range(epochs):
     print('this is the', k+1, 'th epochs trainning !!!')
-    #shuffle(shuffle_list)
     batch = train_data.get_am_batch()
     am.ctc_model.fit_generator(batch, steps_per_epoch=batch_num, epochs=1)
 
@@ -63,7 +61,6 @@ with tf.Session(graph=lm.graph) as sess:
             if (k * batch_num + i) % 10 == 0:
                 rs=sess.run(merged, feed_dict=feed)
                 writer.add_summary(rs, k * batch_num + i)
-        if (k+1) % 5 == 0:
-            print('epochs', k+1, ': average loss = ', total_loss/batch_num)
+        print('epochs', k+1, ': average loss = ', total_loss/batch_num)
     saver.save(sess, 'logs_lm/model_%d' % (epochs + add_num))
     writer.close()

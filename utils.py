@@ -14,12 +14,12 @@ def data_hparams():
         data_type = 'train',
         data_path = 'e:/data/',
         thchs30 = True,
-        aishell = True,
+        aishell = False,
 		prime = False,
 		stcmd = False,
 		batch_size = 1,
-		data_length = None,
-		shuffle = False)
+		data_length = 10,
+		shuffle = True)
     return params
 
 

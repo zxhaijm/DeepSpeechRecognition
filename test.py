@@ -20,7 +20,6 @@ def decode_ctc(num_result, num2word):
 # 0.准备解码所需字典，需和训练一致，也可以将字典保存到本地，直接进行读取
 from utils import get_data, data_hparams
 data_args = data_hparams()
-data_args.data_length = 10 # 重新训练需要注释该行
 train_data = get_data(data_args)
 
 
@@ -52,29 +51,30 @@ with sess.as_default():
 #    此处应设为'test'，我用了'train'因为演示模型较小，如果使用'test'看不出效果，
 #    且会出现未出现的词。
 data_args.data_type = 'train'
+data_args.shuffle = False
+data_args.batch_size = 1
 test_data = get_data(data_args)
-am_batch = test_data.get_am_batch()
-lm_batch = test_data.get_lm_batch()
 
-for i in range(5):
+am_batch = test_data.get_am_batch()
+
+for i in range(10):
     print('\n the ', i, 'th example.')
     # 载入训练好的模型，并进行识别
-    inputs, outputs = next(am_batch)
+    inputs, _ = next(am_batch)
     x = inputs['the_inputs']
-    y = inputs['the_labels'][0]
+    y = test_data.pny_lst[i]
     result = am.model.predict(x, steps=1)
     # 将数字结果转化为文本结果
     _, text = decode_ctc(result, train_data.am_vocab)
     text = ' '.join(text)
     print('文本结果：', text)
-    print('原文结果：', ' '.join([train_data.am_vocab[int(i)] for i in y]))
+    print('原文结果：', ' '.join(y))
     with sess.as_default():
-        _, y = next(lm_batch)
         text = text.strip('\n').split(' ')
         x = np.array([train_data.pny_vocab.index(pny) for pny in text])
         x = x.reshape(1, -1)
         preds = sess.run(lm.preds, {lm.x: x})
         got = ''.join(train_data.han_vocab[idx] for idx in preds[0])
-        print('原文汉字：', ''.join(train_data.han_vocab[idx] for idx in y[0]))
+        print('原文汉字：', test_data.han_lst[i])
         print('识别结果：', got)
 sess.close()
