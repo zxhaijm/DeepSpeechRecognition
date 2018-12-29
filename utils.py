@@ -129,6 +129,7 @@ class get_data():
 		return [vocab.index(pny) for pny in line]
 
 	def han2id(self, line, vocab):
+		line = ''.join(line.split(' '))
 		return [vocab.index(han) for han in line]
 
 	def wav_padding(self, wav_data_lst):
