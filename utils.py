@@ -14,14 +14,15 @@ def data_hparams():
     params = tf.contrib.training.HParams(
         # vocab
         data_type = 'train',
-        data_path = 'e:/data/',
-        thchs30 = True,
+        data_path = '/DeepSpeechRecognition/data/',
+        thchs30 = False,
         aishell = False,
-		prime = False,
-		stcmd = False,
-		batch_size = 1,
-		data_length = 10,
-		shuffle = True)
+	prime = False,
+	stcmd = False,
+	jdz = True,
+	batch_size = 1,
+	data_length = None,
+	shuffle = True)
     return params
 
 
@@ -33,6 +34,7 @@ class get_data():
 		self.aishell = args.aishell
 		self.prime = args.prime
 		self.stcmd = args.stcmd
+		self.jdz = args.jdz
 		self.data_length = args.data_length
 		self.batch_size = args.batch_size
 		self.shuffle = args.shuffle
@@ -50,6 +52,8 @@ class get_data():
 				read_files.append('prime.txt')
 			if self.stcmd == True:
 				read_files.append('stcmd.txt')
+			if self.jdz == True:
+				read_files.append('jdz_train.txt')
 		elif self.data_type == 'dev':
 			if self.thchs30 == True:
 				read_files.append('thchs_dev.txt')
@@ -60,6 +64,8 @@ class get_data():
 				read_files.append('thchs_test.txt')
 			if self.aishell == True:
 				read_files.append('aishell_test.txt')
+			if self.jdz == True:
+				read_files.append('jdz_test.txt')
 		self.wav_lst = []
 		self.pny_lst = []
 		self.han_lst = []
