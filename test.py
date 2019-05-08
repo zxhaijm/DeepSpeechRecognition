@@ -49,8 +49,8 @@ test_data = get_data(data_args)
 am_batch = test_data.get_am_batch()
 word_num = 0
 word_error_num = 0
-for i in range(10):
-    print('\n the ', i, 'th example.')
+for i in range(1):
+    #print('\n the ', i, 'th example.')
     # 载入训练好的模型，并进行识别
     inputs, _ = next(am_batch)
     x = inputs['the_inputs']
@@ -59,8 +59,8 @@ for i in range(10):
     # 将数字结果转化为文本结果
     _, text = decode_ctc(result, train_data.am_vocab)
     text = ' '.join(text)
-    print('文本结果：', text)
-    print('原文结果：', ' '.join(y))
+    #print('文本结果：', text)
+    #print('原文结果：', ' '.join(y))
     with sess.as_default():
         text = text.strip('\n').split(' ')
         x = np.array([train_data.pny_vocab.index(pny) for pny in text])
@@ -68,9 +68,9 @@ for i in range(10):
         preds = sess.run(lm.preds, {lm.x: x})
         label = test_data.han_lst[i]
         got = ''.join(train_data.han_vocab[idx] for idx in preds[0])
-        print('原文汉字：', label)
+        #print('原文汉字：', label)
         print('识别结果：', got)
         word_error_num += min(len(label), GetEditDistance(label, got))
         word_num += len(label)
-print('词错误率：', word_error_num / word_num)
+#print('词错误率：', word_error_num / word_num)
 sess.close()
